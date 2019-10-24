@@ -1,17 +1,15 @@
 const datasets = require("./datasets.json")
 const reset = '\x1b[0m'
 const bright = '\x1b[1m'
+const yellow = '\x1b[33m'
 
 exports = module.exports = {
   name: "Salle au trésor",
   datasets,
-  algo: function (input) {
-    // YOUR CODE BETWEEN HERE
-    
-    // AND HERE
-  },
+  algo: require('../algo.js'),
   verify: function (dataset, output) {
     const outputArray = output.split('')
+    dataset.input.shift()
     const inputMatrix = dataset.input.map(row => row.split(''))
     let score = 0
     let position = {
@@ -19,9 +17,10 @@ exports = module.exports = {
       y: 0
     }
     for (const outputChar of outputArray) {
+      const currentChar = inputMatrix[position.y][position.x]
+      console.log(`${yellow}Tu es sur ${currentChar} et tu fais ${outputChar}${reset}`)
       switch (outputChar) {
         case 'x':
-          const currentChar = inputMatrix[position.y][position.x]
           if (currentChar === 'o') {
             score++
           } else if (currentChar === '*') {

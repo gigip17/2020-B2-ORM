@@ -1,12 +1,12 @@
 const process = require('process')
 const reset = '\x1b[0m'
 const red = '\x1b[31m'
-const blink = '\x1b[5m'
 const green = '\x1b[32m'
+const yellow = '\x1b[33m'
 const bright = '\x1b[1m'
 
 const exos = []
-const exoPaths = ['./1', './2', './3']
+const exoPaths = ['./1/src', './2/src', './3/src']
 
 const log = (messages) => {
   if (!Array.isArray(messages)) {
@@ -22,7 +22,7 @@ const verboseRequire = (path) => {
   try {
     return require(path)
   } catch (err) {
-    log([`${bright}${red}Error when requiring ${path}/index.js${reset}`, err])
+    log([`${red}Error when requiring ${path}/index.js${bright}\n${err}${reset}`])
     process.exit(1)
   }
 }
@@ -32,22 +32,24 @@ for (const exoPath of exoPaths) {
 }
 
 for (const exo of exos) {
-  log(`Starting test for ${exo.name}...`)
-  for (const dataset of exo.datasets) {
-
+  log(`Starting test for ${yellow}${exo.name}${reset}...\n`)
+  for (let i = 0; i < exo.datasets.length;  i++) {
+    const dataset = exo.datasets[i]
     let result = undefined
     try {
-      result = exo.algo(dataset.input)
-      exo.verify(dataset, result)
+      result = exo.algo([...dataset.input])
+      exo.verify({ ...dataset }, result)
     } catch (err) {
       log([
-        `${exo.name} -> ${bright}${blink}${red}KO${reset}`,
-        "\nError :",
-        err
+        `Test n°${i} -> ${red}KO${reset}`,
+        `${bright}`,
+        err,
+        `${reset}`
       ])
       process.exit(1)
     }
+    log(`Test n°${i} -> ${green}OK${reset}`)
   }
-  log(`${exo.name} -> ${bright}${green}OK${reset}\n`)
+  log(`\n${exo.name} -> ${green}OK${reset}\n`)
 }
-log(`${bright}${green}GG !${reset}`)
+log(`\n${green}GG !${reset}`)
